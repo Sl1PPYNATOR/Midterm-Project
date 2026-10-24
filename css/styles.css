@@ -1,3 +1,7 @@
+.text-primary {
+    color: #0066b2 !important; 
+}
+
 .navbar-brand {
     font-size: 1.4rem;
     letter-spacing: 1px;
@@ -58,4 +62,35 @@ footer .text-reset:hover {
     color: rgba(255, 255, 255, 0.65) !important;
     font-weight: 300;
     letter-spacing: 0.5px;
+}
+
+#navbar-placeholder {
+    display: block;
+    width: 100%;
+    min-height: 56px;
+    background-color: #212529;
+}
+
+
+body.dark-mode {
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .card,
+body.dark-mode .list-group-item,
+body.dark-mode .modal-content,
+body.dark-mode .table {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+body.dark-mode .navbar-dark {
+    background-color: #03030a !important;
+}
+
+body.dark-mode footer {
+    background-color: #03030a !important;
+    color: #aaa !important;
 }

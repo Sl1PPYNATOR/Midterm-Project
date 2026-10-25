@@ -23,8 +23,6 @@ document.addEventListener("DOMContentLoaded", function() {
             } else {
                 console.log("Navbar successfully injected from components folder.");             
                 highlightCurrentPageLink();
-                
-                // Update button text on initial load based on current mode
                 if ($("body").hasClass("dark-mode")) {
                     $("#darkModeToggle").text("Light Mode");
                 } else {
@@ -41,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-        initializeReusableCarousel("#home-carousel", "home-carousel");
+        initializeCarousel("#home-carousel", "home-carousel");
     } else {
         console.error("jQuery is missing! Please ensure jQuery is loaded before this script.");
     }
@@ -65,7 +63,7 @@ function highlightCurrentPageLink() {
     });
 }
 
-function initializeReusableCarousel(placeholderSelector, uniqueId) {
+function initializeCarousel(placeholderSelector, uniqueId) {
     const container = document.querySelector(placeholderSelector);
     if (!container) return;
 
@@ -81,6 +79,28 @@ function initializeReusableCarousel(placeholderSelector, uniqueId) {
         container.querySelector(".slide-2").src = container.getAttribute("data-img2");
         container.querySelector(".slide-3").src = container.getAttribute("data-img3");
 
-        console.log(`Carousel component [${uniqueId}] successfully mounted.`);
+        const myCarousel = new bootstrap.Carousel(carouselElement, {
+            interval: 5000,
+            ride: "carousel",
+            touch: true
+        });
+
+        $(container).find(".carousel-control-next").on("click", function(e) {
+            e.preventDefault();
+            myCarousel.next();
+        });
+
+        $(container).find(".carousel-control-prev").on("click", function(e) {
+            e.preventDefault();
+            myCarousel.prev();
+        });
+
+        $(container).find("[data-bs-slide-to]").on("click", function(e) {
+            e.preventDefault();
+            const slideIndex = parseInt($(this).attr("data-bs-slide-to"));
+            myCarousel.to(slideIndex);
+        });
+
+        console.log("Carousel component [" + uniqueId + "] successfully mounted and initialized.");
     });
 }

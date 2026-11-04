@@ -8,13 +8,106 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://code.jquery.com/jquery-4.0.0.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="js/main.js" defer></script>
+    <script src="js/analytics.js" defer></script>
 </head>
 <body>
     <div id="navbar-placeholder"></div>
-    <main class="container my-5">
-        <h1>Analytics</h1>
-        <p>Here you can find detailed analytics about our BMW Classics Garage operations.</p>
+    <main class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 fw-bold mb-1">Analytics & Kanban Board</h1>
+                <p class="text-muted small mb-0">Visualize project progress and manage jobs.</p>
+            </div>
+            <a href="tasks.html" class="btn btn-custom-primary btn-sm">Manage Table View</a>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3 h-100">
+                    <div class="card-body text-center">
+                        <h5 class="text-muted text-uppercase small fw-bold">High Priority Active</h5>
+                        <h2 id="highActiveCount" class="display-6 fw-bold mb-0">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3 h-100">
+                    <div class="card-body text-center">
+                        <h5 class="text-muted text-uppercase small fw-bold">Overdue Jobs</h5>
+                        <h2 id="overdueCount" class="display-6 fw-bold mb-0">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3 h-100">
+                    <div class="card-body text-center">
+                        <h5 class="text-muted text-uppercase small fw-bold">Completion Rate</h5>
+                        <h2 id="completionRate" class="display-6 fw-bold mb-0">0%</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-3 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-3">Task Status Overview</h5>
+                        <canvas id="statusChart" height="140"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-3 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-3">Tasks by Priority</h5>
+                        <canvas id="priorityChart" height="140"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm p-4">
+            <h4 class="fw-bold mb-3">Kanban Board</h4>
+            <p class="text-muted small mb-4">Drag and drop task cards between columns to automatically update their status.</p>
+
+        <div class="row g-3">
+                <!-- Column 1: To Do -->
+                <div class="col-md-4">
+                    <div class="kanban-column p-3 rounded bg-light border h-100 d-flex flex-column" data-status="todo" ondragover="allowDrop(event)" ondrop="dropTask(event, 'todo')">
+                        <h5 class="fw-bold text-dark mb-3 d-flex justify-content-between align-items-center">
+                            <span>To Do</span>
+                            <span id="todoCount" class="badge bg-secondary rounded-pill">2</span>
+                        </h5>
+                        <div class="kanban-dropzone flex-grow-1 d-flex flex-column gap-3" id="todoColumn"></div>
+                    </div>
+                </div>
+
+                <!-- Column 2: In Progress -->
+                <div class="col-md-4">
+                    <div class="kanban-column p-3 rounded bg-light border h-100 d-flex flex-column" data-status="in-progress" ondragover="allowDrop(event)" ondrop="dropTask(event, 'in-progress')">
+                        <h5 class="fw-bold text-dark mb-3 d-flex justify-content-between align-items-center">
+                            <span>In Progress</span>
+                            <span id="inProgressCount" class="badge bg-warning text-dark rounded-pill">2</span>
+                        </h5>
+                        <div class="kanban-dropzone flex-grow-1 d-flex flex-column gap-3" id="inProgressColumn"></div>
+                    </div>
+                </div>
+
+                <!-- Column 3: Completed -->
+                <div class="col-md-4">
+                    <div class="kanban-column p-3 rounded bg-light border h-100 d-flex flex-column" data-status="completed" ondragover="allowDrop(event)" ondrop="dropTask(event, 'completed')">
+                        <h5 class="fw-bold text-dark mb-3 d-flex justify-content-between align-items-center">
+                            <span>Completed</span>
+                            <span id="completedCount" class="badge bg-success rounded-pill">4</span>
+                        </h5>
+                        <div class="kanban-dropzone flex-grow-1 d-flex flex-column gap-3" id="completedColumn"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
     <div id="footer-placeholder"></div>
 </body>

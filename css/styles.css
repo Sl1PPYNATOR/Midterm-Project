@@ -250,3 +250,43 @@ body.dark-mode .custom-desc-modal .modal-header {
 body.dark-mode .custom-desc-modal .btn-close {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
+
+.kanban-column {
+    background-color: #f8f9fa !important;
+    border: 1px solid #dee2e6 !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 500px !important;
+    height: 100%;
+}
+
+body.dark-mode .kanban-column {
+    background-color: #1e1e1e !important;
+    border-color: #333 !important;
+}
+
+.kanban-dropzone {
+    flex: 1 1 auto;
+    min-height: 400px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.task-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+body.dark-mode .kanban-column h5 {
+    color: #f8f9fa !important;
+}
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+body.dark-mode .task-card {
+    background-color: #2b3035 !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
+

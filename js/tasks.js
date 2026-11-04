@@ -16,7 +16,7 @@ $(document).ready(function() {
             description: description,
             dueDate: dueDate,
             priority: priority,
-            status: "pending"
+            status: "todo"
         };
         tasks.push(newTask);
         persistAndRender();
@@ -25,7 +25,6 @@ $(document).ready(function() {
         $("#formArrow").css("transform", "rotate(0deg)");
     });
 
- 
     $(document).on("click", ".delete-btn", function() {
         const taskId = $(this).attr("data-id");
         tasks = tasks.filter(task => task.id !== taskId);
@@ -36,7 +35,13 @@ $(document).ready(function() {
         const taskId = $(this).attr("data-id");
         tasks = tasks.map(task => {
             if (task.id === taskId) {
-                task.status = task.status === "pending" ? "completed" : "pending";
+                if (task.status === "todo" || task.status === "pending") {
+                    task.status = "in-progress";
+                } else if (task.status === "in-progress") {
+                    task.status = "completed";
+                } else {
+                    task.status = "todo";
+                }
             }
             return task;
         });
@@ -89,9 +94,10 @@ $(document).ready(function() {
         const sortOption = $("#sortOption").val();
 
         let filteredTasks = tasks.filter(task => {
-            const matchesSearch = task.name.toLowerCase().includes(searchQuery) || 
-                                  task.description.toLowerCase().includes(searchQuery);
-            const matchesStatus = statusFilter === "all" || task.status === statusFilter;
+            const matchesSearch = task.name.toLowerCase().includes(searchQuery) || task.description.toLowerCase().includes(searchQuery);
+            let taskStatus = task.status || "todo";
+            if (taskStatus === "pending") taskStatus = "todo";
+            const matchesStatus = statusFilter === "all" || taskStatus === statusFilter;
             const matchesPriority = priorityFilter === "all" || task.priority === priorityFilter;
             return matchesSearch && matchesStatus && matchesPriority;
         });
@@ -122,8 +128,19 @@ $(document).ready(function() {
             else if (task.priority === "Medium") priorityBadgeClass = "bg-warning text-dark";
             else if (task.priority === "Low") priorityBadgeClass = "bg-info text-dark";
 
-            const statusBadgeClass = task.status === "completed" ? "bg-success" : "bg-warning text-dark";
-            const statusText = task.status === "completed" ? "Completed" : "Pending";
+            let currentStatus = task.status || "todo";
+            if (currentStatus === "pending") currentStatus = "todo";
+
+            let statusBadgeClass = "bg-secondary";
+            let statusText = "To Do";
+
+            if (currentStatus === "in-progress") {
+                statusBadgeClass = "bg-warning text-dark";
+                statusText = "In Progress";
+            } else if (currentStatus === "completed") {
+                statusBadgeClass = "bg-success";
+                statusText = "Completed";
+            }
 
             let displayDesc = task.description;
             let isTruncated = false;
@@ -145,7 +162,7 @@ $(document).ready(function() {
                     <td data-label="Status"><span class="badge ${statusBadgeClass}">${statusText}</span></td>
                     <td data-label="Actions">
                         <div class="d-flex gap-1 justify-content-end align-items-center">
-                            <button class="btn btn-sm btn-outline-success toggle-status-btn" data-id="${task.id}" title="Toggle Complete">✓</button>
+                            <button class="btn btn-sm btn-outline-success toggle-status-btn" data-id="${task.id}" title="Cycle Status">✓</button>
                             <button class="btn btn-sm btn-outline-primary edit-btn" data-id="${task.id}" title="Edit Job">Edit</button>
                             <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${task.id}" title="Delete Job">Delete</button>
                         </div>
@@ -174,14 +191,14 @@ $(document).ready(function() {
     }
 
     function formatDate(dateString) {
-    if (!dateString) return "";
-    const parts = dateString.split("-");
-    if (parts.length !== 3) return dateString;
-    const year = parts[0].slice(-2);
-    const month = parts[1];
-    const day = parts[2];
-    return `${day}-${month}-${year}`;
-}
+        if (!dateString) return "";
+        const parts = dateString.split("-");
+        if (parts.length !== 3) return dateString;
+        const year = parts[0].slice(-2);
+        const month = parts[1];
+        const day = parts[2];
+        return `${day}-${month}-${year}`;
+    }
 
     function escapeHtml(string) {
         return $("<div>").text(string).html();

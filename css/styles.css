@@ -289,4 +289,7 @@ body.dark-mode .task-card {
     color: #e0e0e0 !important;
     border-color: #444 !important;
 }
+.card canvas {
+    max-height: 250px !important;
+}
 

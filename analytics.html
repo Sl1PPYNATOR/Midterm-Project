@@ -50,20 +50,29 @@
             </div>
         </div>
 
+        <div class="card border-0 shadow-sm p-4 mb-5">
+            <h5 class="card-title fw-bold mb-3">Due Date Timeline Trend</h5>
+            <p class="text-muted small mb-4">Chronological volume of restoration jobs scheduled over time.</p>
+            <div style="position: relative; height: 260px; width: 100%;">
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </div>
+
         <div class="row g-4 mb-5">
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm p-3 h-100">
                     <div class="card-body">
                         <h5 class="card-title fw-bold mb-3">Task Status Overview</h5>
-                        <canvas id="statusChart" height="140"></canvas>
+                        <canvas id="statusChart"></canvas>
                     </div>
                 </div>
             </div>
+
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm p-3 h-100">
                     <div class="card-body">
                         <h5 class="card-title fw-bold mb-3">Tasks by Priority</h5>
-                        <canvas id="priorityChart" height="140"></canvas>
+                        <canvas id="priorityChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -73,8 +82,21 @@
             <h4 class="fw-bold mb-3">Kanban Board</h4>
             <p class="text-muted small mb-4">Drag and drop task cards between columns to automatically update their status.</p>
 
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="h5 fw-bold mb-0">Restoration Kanban Board</h3>
+            <div class="d-flex align-items-center gap-2">
+                <label for="kanbanSort" class="form-label small fw-bold mb-0 text-nowrap">Sort Cards:</label>
+                <select id="kanbanSort" class="form-select form-select-sm" style="width: 180px;">
+                    <option value="date-asc">Due Date (Soonest)</option>
+                    <option value="date-desc">Due Date (Latest)</option>
+                    <option value="priority-desc">Priority (High to Low)</option>
+                    <option value="name-asc">Job Name (A-Z)</option>
+                </select>
+            </div>
+        </div>
+
         <div class="row g-3">
-                <!-- Column 1: To Do -->
+
                 <div class="col-md-4">
                     <div class="kanban-column p-3 rounded bg-light border h-100 d-flex flex-column" data-status="todo" ondragover="allowDrop(event)" ondrop="dropTask(event, 'todo')">
                         <h5 class="fw-bold text-dark mb-3 d-flex justify-content-between align-items-center">
@@ -85,7 +107,6 @@
                     </div>
                 </div>
 
-                <!-- Column 2: In Progress -->
                 <div class="col-md-4">
                     <div class="kanban-column p-3 rounded bg-light border h-100 d-flex flex-column" data-status="in-progress" ondragover="allowDrop(event)" ondrop="dropTask(event, 'in-progress')">
                         <h5 class="fw-bold text-dark mb-3 d-flex justify-content-between align-items-center">
@@ -96,7 +117,6 @@
                     </div>
                 </div>
 
-                <!-- Column 3: Completed -->
                 <div class="col-md-4">
                     <div class="kanban-column p-3 rounded bg-light border h-100 d-flex flex-column" data-status="completed" ondragover="allowDrop(event)" ondrop="dropTask(event, 'completed')">
                         <h5 class="fw-bold text-dark mb-3 d-flex justify-content-between align-items-center">

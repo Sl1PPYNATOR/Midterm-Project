@@ -9,12 +9,14 @@ $(document).ready(function() {
 
     let statusChartInstance = null;
     let priorityChartInstance = null;
+    let timelineChartInstance = null; // Add this
 
     renderDashboard();
 
     function renderDashboard() {
         updateSummaryMetrics();
         updateCharts();
+        updateTimelineChart(); // Add this
         renderKanbanBoard();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
     }
@@ -41,7 +43,16 @@ $(document).ready(function() {
                     borderWidth: 1
                 }]
             },
-            options: { responsive: true, plugins: { legend: { display: false } } }
+            options: { 
+                responsive: true, 
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
         });
 
         const priorityCtx = $('#priorityChart')[0].getContext("2d");
@@ -59,6 +70,56 @@ $(document).ready(function() {
         });
     }
 
+    function updateTimelineChart() {
+        const timelineEl = $('#timelineChart')[0];
+        if (!timelineEl) return;
+
+        const dateCounts = {};
+        tasks.forEach(t => {
+            if (t.dueDate && t.status !== "completed") {
+                dateCounts[t.dueDate] = (dateCounts[t.dueDate] || 0) + 1;
+            }
+        });
+
+        const sortedDates = Object.keys(dateCounts).sort((a, b) => new Date(a) - new Date(b));
+        const counts = [];
+        const formattedDates = [];
+
+        sortedDates.forEach(dateStr => {
+            counts.push(dateCounts[dateStr]);
+
+            const parts = dateStr.split("-");
+            if (parts.length === 3) {
+                formattedDates.push(`${parts[2]}-${parts[1]}-${parts[0].slice(-2)}`);
+            } else {
+                formattedDates.push(dateStr);
+            }
+        });
+
+        const hasData = sortedDates.length > 0;
+
+        if (timelineChartInstance) timelineChartInstance.destroy();
+        timelineChartInstance = new Chart(timelineEl.getContext("2d"), {
+            type: "line",
+            data: {
+                labels: hasData ? formattedDates : ["No Active Due Dates"],
+                datasets: [{
+                    label: "Active Jobs Due",
+                    data: hasData ? counts : [0],
+                    borderColor: "#0d6efd",
+                    backgroundColor: "rgba(13, 110, 253, 0.1)",
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+            }
+        });
+    }
+
     function updateSummaryMetrics() {
         const highActive = tasks.filter(t => t.priority === "High" && t.status !== "completed").length;
         $("#highActiveCount").text(highActive);
@@ -73,14 +134,36 @@ $(document).ready(function() {
         $("#completionRate").text(`${rate}%`);
     }
 
+    $("#kanbanSort").on("change", function() {
+        renderKanbanBoard();
+    });
+
     function renderKanbanBoard() {
         const todoCol = $("#todoColumn").empty();
         const inProgressCol = $("#inProgressColumn").empty();
         const completedCol = $("#completedColumn").empty();
 
         let todoCnt = 0, ipCnt = 0, compCnt = 0;
+        const sortVal = $("#kanbanSort").val() || "date-asc";
 
-        tasks.forEach(task => {
+        let sortedTasks = [...tasks].sort((a, b) => {
+            if (sortVal === "date-asc") {
+                if (!a.dueDate) return 1;
+                if (!b.dueDate) return -1;
+                return new Date(a.dueDate) - new Date(b.dueDate);
+            } else if (sortVal === "date-desc") {
+                if (!a.dueDate) return 1;
+                if (!b.dueDate) return -1;
+                return new Date(b.dueDate) - new Date(a.dueDate);
+            } else if (sortVal === "priority-desc") {
+                const priorityWeight = { "High": 3, "Medium": 2, "Low": 1 };
+                return (priorityWeight[b.priority] || 0) - (priorityWeight[a.priority] || 0);
+            } else if (sortVal === "name-asc") {
+                return (a.name || "").localeCompare(b.name || "");
+            }
+        });
+
+        sortedTasks.forEach(task => {
             let badgeClass = "bg-secondary";
             if (task.priority === "High") badgeClass = "bg-danger";
             else if (task.priority === "Medium") badgeClass = "bg-warning text-dark";

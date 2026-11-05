@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         initializeCarousel("#home-carousel", "home-carousel");
+        initializeCarousel("#about-carousel", "about-carousel");
     } else {
         console.error("jQuery is missing! Please ensure jQuery is loaded before this script.");
     }

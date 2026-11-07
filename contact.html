@@ -6,16 +6,130 @@
     <title>Contact | BMW Classics Garage</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-4.0.0.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="js/main.js" defer></script>
+    <script src="js/contact.js" defer></script>
 </head>
 <body>
     <div id="navbar-placeholder"></div>
-    <main class="container my-5">
-        <h1>Contact Us</h1>
-        <p>We'd love to hear from you! Please feel free to reach out to us with any questions or inquiries.</p>
+
+    <main class="container py-5">
+        <div class="row mb-5">
+            <div class="col-12">
+                <h1 class="fw-bold mb-3">Contact Our Workshop</h1>
+                <p class="text-muted lead mb-0">
+                    Have a vintage BMW project in mind or need assistance with our website?
+                </p>
+                <span class="text-primary text-uppercase fw-bold small d-block mb-1">Get In Touch</span>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-stretch">
+            <div class="col-lg-6">
+                <div class="card bg-body-secondary border-0 shadow-sm p-4 h-100">
+                    <h3 class="fw-bold h4 mb-3"><i class="fa-solid fa-envelope text-primary me-2"></i>Send Us a Message</h3>
+                    
+                    <form id="contactForm" novalidate>
+                        <div class="mb-3">
+                            <label for="contactName" class="form-label fw-semibold small">Your Name:</label>
+                            <input type="text" class="form-control" id="contactName" maxlength="50" placeholder="Max length: 50 Characters" required>
+                            <div class="invalid-feedback">Please enter your name.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contactEmail" class="form-label fw-semibold small">Email Address:</label>
+                            <input type="email" class="form-control" id="contactEmail" maxlength="50" placeholder="Max length: 50 Characters (name@example.com)" required>
+                            <div class="invalid-feedback">Please provide a valid email address.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="contactSubject" class="form-label fw-semibold small">Subject:</label>
+                            <input type="text" class="form-control" id="contactSubject" maxlength="75" placeholder="Max length: 75 Characters" required>
+                            <div class="invalid-feedback">Please enter a subject.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="contactMessage" class="form-label fw-semibold small">Message:</label>
+                            <textarea class="form-control" id="contactMessage" rows="4" maxlength="650" placeholder="Max length: 650 Characters" required></textarea>
+                            <div class="invalid-feedback">Please write your message.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold shadow-sm d-inline-flex align-items-center justify-content-center">
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-6 d-flex flex-column gap-4">
+                <div class="card bg-body-secondary border-0 shadow-sm overflow-hidden flex-grow-1" style="min-height: 280px;">
+                    <div class="card-body p-0 h-100">
+                        <iframe 
+                            width="100%" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1183.9133516179863!2d11.55737071440734!3d48.172682751700314!2m3!1f357.1875000000004!2f23.22252652413622!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x479e7680865cf475%3A0xde9a49c9837ff33!2sBMW%20Headquarters!5e1!3m2!1sen!2sgr!4v1794065053200!5m2!1sen!2sgr"
+                            height="100%" 
+                            style="border:0; min-height: 280px;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Garage Location Map">
+                        </iframe>
+                    </div>
+                </div>
+                
+                <div class="card bg-body-secondary border-0 shadow-sm p-4 text-center">
+                    <h4 class="fw-bold h5 mb-3">Connect With Our Workshop</h4>
+                    <p class="text-muted small mb-3">Follow our day-to-day restoration builds and live workshop updates across our social channels.</p>
+                    
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="https://github.com/Sl1PPYNATOR/Midterm-Project" target="_blank" class="btn btn-outline-primary rounded-circle p-2" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;" title="GitHub Project">
+                            <i class="fa-brands fa-github fa-lg"></i>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="btn btn-outline-primary rounded-circle p-2" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;" title="Instagram">
+                            <i class="fa-brands fa-instagram fa-lg"></i>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="btn btn-outline-primary rounded-circle p-2" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;" title="YouTube">
+                            <i class="fa-brands fa-youtube fa-lg"></i>
+                        </a>
+                        <a href="https://facebook.com" target="_blank" class="btn btn-outline-primary rounded-circle p-2" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;" title="Facebook">
+                            <i class="fa-brands fa-facebook-f fa-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
+
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-body-secondary border border-secondary border-opacity-25 shadow-lg">
+                <div class="modal-header border-bottom border-secondary border-opacity-25">
+                    <h5 class="modal-title fw-bold text-success" id="confirmationModalLabel">
+                        <i class="fa-solid fa-circle-check me-2"></i>Message Received!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body py-4">
+                    <p class="text-muted mb-3">
+                        Thank you, <strong id="confName" class="fw-bold"></strong>. Your message has been successfully captured:
+                    </p>
+                    
+                    <div class="p-3 bg-body-tertiary rounded border border-secondary border-opacity-25 small mb-3">
+                        <p class="mb-1"><strong>Email:</strong> <span id="confEmail" class="text-muted"></span></p>
+                        <p class="mb-1"><strong>Subject:</strong> <span id="confSubject" class="text-muted"></span></p>
+                        <p class="mb-0"><strong>Message:</strong> <span id="confMessage" class="text-muted"></span></p>
+                    </div>
+                    
+                    <p class="text-muted small mb-0">Our team will review your inquiry and get back to you shortly.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="footer-placeholder"></div>
 </body>
 </html>

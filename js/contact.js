@@ -8,11 +8,13 @@ $(document).ready(function() {
 
         const formElement = $form[0];
 
+        //check if form is valid before proceeding
         if (!formElement.checkValidity()) {
             $form.addClass("was-validated");
             return;
         }
 
+        //collect form data and populate confirmation modal
         const name = $("#contactName").val().trim();
         const email = $("#contactEmail").val().trim();
         const subject = $("#contactSubject").val().trim();
@@ -23,10 +25,12 @@ $(document).ready(function() {
         $("#confSubject").text(subject);
         $("#confMessage").text(message);
 
+        //show confirmation modal
         const modalElement = $("#confirmationModal")[0];
         const confirmationModal = new bootstrap.Modal(modalElement);
         confirmationModal.show();
 
+        //reset form after submission
         formElement.reset();
         $form.removeClass("was-validated");
     });

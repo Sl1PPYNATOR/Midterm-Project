@@ -3,51 +3,44 @@ $(document).ready(function() {
     let tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     renderTasks();
 
-    $("#taskForm").on("submit", function(e) {
+    //task creation and submission
+   $("#taskForm").on("submit", function(e) {
         e.preventDefault();
         const name = $("#taskName").val().trim();
         const description = $("#taskDescription").val().trim();
         const dueDate = $("#taskDueDate").val();
         const priority = $("#taskPriority").val();
         if (!name || !dueDate) return;
+        
+        const preservedStatus = $(this).data("edit-status") || "todo";
+        const isEditMode = $(this).data("is-editing");
+
         const newTask = {
             id: Date.now().toString(),
             name: name,
             description: description,
             dueDate: dueDate,
             priority: priority,
-            status: "todo"
+            status: preservedStatus
         };
+        
         tasks.push(newTask);
         persistAndRender();
+
+        if (isEditMode) {
+            logActivity(`Updated details for: "${name}"`, "Updated");
+            $(this).removeData("is-editing");
+            $(this).removeData("edit-status");
+        } else {
+            logActivity(`Added task: "${name}"`, "To Do");
+        }
+
         this.reset();
         $("#taskFormCard").slideUp("fast");
         $("#formArrow").css("transform", "rotate(0deg)");
     });
 
-    $(document).on("click", ".delete-btn", function() {
-        const taskId = $(this).attr("data-id");
-        tasks = tasks.filter(task => task.id !== taskId);
-        persistAndRender();
-    });
-
-    $(document).on("click", ".toggle-status-btn", function() {
-        const taskId = $(this).attr("data-id");
-        tasks = tasks.map(task => {
-            if (task.id === taskId) {
-                if (task.status === "todo" || task.status === "pending") {
-                    task.status = "in-progress";
-                } else if (task.status === "in-progress") {
-                    task.status = "completed";
-                } else {
-                    task.status = "todo";
-                }
-            }
-            return task;
-        });
-        persistAndRender();
-    });
-
+    //load selected task into form for editing
     $(document).on("click", ".edit-btn", function() {
         const taskId = $(this).attr("data-id");
         const taskToEdit = tasks.find(task => task.id === taskId);
@@ -59,6 +52,9 @@ $(document).ready(function() {
         $("#taskDueDate").val(taskToEdit.dueDate);
         $("#taskPriority").val(taskToEdit.priority);
 
+        $("#taskForm").data("is-editing", true);
+        $("#taskForm").data("edit-status", taskToEdit.status || "todo");
+
         tasks = tasks.filter(task => task.id !== taskId);
         persistAndRender();
 
@@ -67,32 +63,77 @@ $(document).ready(function() {
         $("#taskName").focus();
     });
 
+    //delete task and log activity
+    $(document).on("click", ".delete-btn", function() {
+        const taskId = $(this).attr("data-id");
+        const taskToDelete = tasks.find(task => task.id === taskId);
+        
+        if (taskToDelete) {
+            logActivity(`Deleted task: "${taskToDelete.name}"`, "Deleted");
+        }
+
+        tasks = tasks.filter(task => task.id !== taskId);
+        persistAndRender();
+    });
+
+    //cycle task status and log activity
+    $(document).on("click", ".toggle-status-btn", function() {
+        const taskId = $(this).attr("data-id");
+        let updatedStatusText = "To Do";
+
+        tasks = tasks.map(task => {
+            if (task.id === taskId) {
+                if (task.status === "todo" || task.status === "pending") {
+                    task.status = "in-progress";
+                    updatedStatusText = "In Progress";
+                } else if (task.status === "in-progress") {
+                    task.status = "completed";
+                    updatedStatusText = "Completed";
+                } else {
+                    task.status = "todo";
+                    updatedStatusText = "To Do";
+                }
+                logActivity(`Updated "${task.name}" status to ${updatedStatusText}`, updatedStatusText);
+            }
+            return task;
+        });
+        persistAndRender();
+    });
+
+    
+
+    //refresh task list when search, filter or sort options change
     $("#searchInput, #statusFilter, #priorityFilter, #sortOption").on("input change", function() {
         renderTasks();
     });
 
+    //toggle collapsable task creation/edit form
     $(document).on("click", "#toggleFormBtn", function() {
         $("#taskFormCard").slideToggle("fast", function() {
             const isVisible = $(this).is(":visible");
             if (isVisible) {
-                $("#formArrow").css("transform", "rotate(180deg)");
+                $("#formArrow").css("transform", "rotate(180deg)"); //rotates arrow when form is open (realy like this feature)
             } else {
                 $("#formArrow").css("transform", "rotate(0deg)");
             }
         });
     });
 
+    //save task array to local storage and refresh
     function persistAndRender() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
         renderTasks();
     }
 
+    //filter, sort and render tasks into main table
     function renderTasks() {
+        //get current search, filter and sort values
         const searchQuery = $("#searchInput").val().toLowerCase();
         const statusFilter = $("#statusFilter").val();
         const priorityFilter = $("#priorityFilter").val();
         const sortOption = $("#sortOption").val();
 
+        //filter tasks based on search, status and priority
         let filteredTasks = tasks.filter(task => {
             const matchesSearch = task.name.toLowerCase().includes(searchQuery) || task.description.toLowerCase().includes(searchQuery);
             let taskStatus = task.status || "todo";
@@ -102,6 +143,7 @@ $(document).ready(function() {
             return matchesSearch && matchesStatus && matchesPriority;
         });
 
+        //sort filtered tasks based on selected option
         filteredTasks.sort((a, b) => {
             if (sortOption === "date-asc") {
                 return new Date(a.dueDate) - new Date(b.dueDate);
@@ -114,14 +156,17 @@ $(document).ready(function() {
 
         updateSummaryMetrics();
 
+        //clear existing table rows before rendering new ones
         const tableBody = $("#taskTableBody");
         tableBody.empty();
 
+        //display message if no tasks match the current filters
         if (filteredTasks.length === 0) {
             tableBody.html(`<tr><td colspan="6" class="text-center text-muted py-4">No matching garage jobs found.</td></tr>`);
             return;
         }
 
+        //render each filtered task into the table
         filteredTasks.forEach(task => {
             let priorityBadgeClass = "bg-secondary";
             if (task.priority === "High") priorityBadgeClass = "bg-danger";
@@ -142,6 +187,7 @@ $(document).ready(function() {
                 statusText = "Completed";
             }
 
+            //truncate long descriptions for table display
             let displayDesc = task.description;
             let isTruncated = false;
             if (displayDesc.length > 75) {
@@ -149,10 +195,12 @@ $(document).ready(function() {
                 isTruncated = true;
             }
 
+            //safely add description to table, with option to view full text in modal
             const descHtml = isTruncated 
                 ? `<span class="truncated-desc" data-full-text="${encodeURIComponent(task.description)}" title="Click to view full description">${escapeHtml(displayDesc)}</span>`
                 : escapeHtml(task.description);
 
+            //construct table row for each task
             const row = `
                 <tr>
                     <td data-label="Priority"><span class="badge ${priorityBadgeClass}">${task.priority}</span></td>
@@ -172,7 +220,8 @@ $(document).ready(function() {
             tableBody.append(row);
         });
     }
- 
+    
+    //modal to show full description
     $(document).on("click", ".truncated-desc", function() {
         const fullText = decodeURIComponent($(this).attr("data-full-text"));
         $("#modalDescriptionContent").text(fullText);
@@ -200,7 +249,30 @@ $(document).ready(function() {
         return `${day}-${month}-${year}`;
     }
 
+    //prevent XSS injection
     function escapeHtml(string) {
         return $("<div>").text(string).html();
+    }
+
+    //log recent user activity
+    function logActivity(message, statusType) {
+    let activityLog = JSON.parse(localStorage.getItem("bmw_garage_activity")) || [];
+    
+    let formattedMessage = message;
+    if (formattedMessage.length > 45) {
+        formattedMessage = formattedMessage.substring(0, 42) + '..."';
+    }
+
+    activityLog.unshift({
+        message: formattedMessage,
+        status: statusType, 
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    });
+
+    if (activityLog.length > 10) {
+        activityLog = activityLog.slice(0, 10);
+    }
+
+    localStorage.setItem("bmw_garage_activity", JSON.stringify(activityLog));
     }
 });

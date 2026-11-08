@@ -2,6 +2,7 @@ $(document).ready(function() {
     const STORAGE_KEY = "bmw_garage_tasks";
     let tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
+    //legacy support: if tasks have no status, default to "todo"
     tasks = tasks.map(t => {
         if (!t.status || t.status === "pending") t.status = "todo";
         return t;
@@ -9,18 +10,20 @@ $(document).ready(function() {
 
     let statusChartInstance = null;
     let priorityChartInstance = null;
-    let timelineChartInstance = null; // Add this
+    let timelineChartInstance = null;
 
     renderDashboard();
 
+    //master function to render all dashboard components and save tasks to localStorage
     function renderDashboard() {
         updateSummaryMetrics();
         updateCharts();
-        updateTimelineChart(); // Add this
+        updateTimelineChart();
         renderKanbanBoard();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
     }
 
+    //render the bar chart and doughnut chart
     function updateCharts() {
         const todoCount = tasks.filter(t => t.status === "todo").length;
         const inProgressCount = tasks.filter(t => t.status === "in-progress").length;
@@ -30,6 +33,7 @@ $(document).ready(function() {
         const medCount = tasks.filter(t => t.priority === "Medium").length;
         const lowCount = tasks.filter(t => t.priority === "Low").length;
 
+        //render and refresh status bar chart
         const statusCtx = $('#statusChart')[0].getContext("2d");
         if (statusChartInstance) statusChartInstance.destroy();
         statusChartInstance = new Chart(statusCtx, {
@@ -55,6 +59,7 @@ $(document).ready(function() {
             }
         });
 
+        //render and refresh priority doughnut chart
         const priorityCtx = $('#priorityChart')[0].getContext("2d");
         if (priorityChartInstance) priorityChartInstance.destroy();
         priorityChartInstance = new Chart(priorityCtx, {
@@ -70,10 +75,12 @@ $(document).ready(function() {
         });
     }
 
+    //render time-line chart
     function updateTimelineChart() {
         const timelineEl = $('#timelineChart')[0];
         if (!timelineEl) return;
 
+        //count active jobs (uncompleted) due on each date
         const dateCounts = {};
         tasks.forEach(t => {
             if (t.dueDate && t.status !== "completed") {
@@ -81,10 +88,12 @@ $(document).ready(function() {
             }
         });
 
+        //sort unique dates chronologically and prepare data for chart
         const sortedDates = Object.keys(dateCounts).sort((a, b) => new Date(a) - new Date(b));
         const counts = [];
         const formattedDates = [];
 
+        //map dates and format to DD-MM-YY
         sortedDates.forEach(dateStr => {
             counts.push(dateCounts[dateStr]);
 
@@ -98,6 +107,7 @@ $(document).ready(function() {
 
         const hasData = sortedDates.length > 0;
 
+        //initialize or re-render time-line graph with data
         if (timelineChartInstance) timelineChartInstance.destroy();
         timelineChartInstance = new Chart(timelineEl.getContext("2d"), {
             type: "line",
@@ -121,19 +131,23 @@ $(document).ready(function() {
     }
 
     function updateSummaryMetrics() {
+        //high priority active count
         const highActive = tasks.filter(t => t.priority === "High" && t.status !== "completed").length;
         $("#highActiveCount").text(highActive);
 
+        //overdue jobs
         const todayStr = new Date().toISOString().split("T")[0];
         const overdue = tasks.filter(t => t.status !== "completed" && t.dueDate && t.dueDate < todayStr).length;
         $("#overdueCount").text(overdue);
 
+        //completion rate
         const total = tasks.length;
         const completed = tasks.filter(t => t.status === "completed").length;
         const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
         $("#completionRate").text(`${rate}%`);
     }
 
+    //re-render kanban board based on selected sort order
     $("#kanbanSort").on("change", function() {
         renderKanbanBoard();
     });
@@ -146,6 +160,7 @@ $(document).ready(function() {
         let todoCnt = 0, ipCnt = 0, compCnt = 0;
         const sortVal = $("#kanbanSort").val() || "date-asc";
 
+        //sort tasks based on selected criteria
         let sortedTasks = [...tasks].sort((a, b) => {
             if (sortVal === "date-asc") {
                 if (!a.dueDate) return 1;
@@ -163,12 +178,14 @@ $(document).ready(function() {
             }
         });
 
+        //render each task into the appropriate kanban column
         sortedTasks.forEach(task => {
             let badgeClass = "bg-secondary";
             if (task.priority === "High") badgeClass = "bg-danger";
             else if (task.priority === "Medium") badgeClass = "bg-warning text-dark";
             else if (task.priority === "Low") badgeClass = "bg-info text-dark";
 
+            //safely construct card HTML for each task
             const cardHtml = `
                 <div class="card shadow-sm p-3 task-card bg-white border" draggable="true" ondragstart="dragTask(event, '${task.id}')" style="cursor: grab;">
                     <div class="d-flex justify-content-between align-items-start mb-2">
@@ -180,6 +197,7 @@ $(document).ready(function() {
                 </div>
             `;
 
+            //append card to the appropriate column and increment count
             if (task.status === "todo") {
                 todoCol.append(cardHtml);
                 todoCnt++;
@@ -192,16 +210,19 @@ $(document).ready(function() {
             }
         });
 
+        //update summary counts for each kanban column
         $("#todoCount").text(todoCnt);
         $("#inProgressCount").text(ipCnt);
         $("#completedCount").text(compCnt);
     }
 
+    //prevent XSS injection
     function escapeHtml(string) {
         return $("<div>").text(string).html();
     }
 });
 
+//drag and drop functions for kanban board
 function allowDrop(ev) {
     ev.preventDefault();
 }

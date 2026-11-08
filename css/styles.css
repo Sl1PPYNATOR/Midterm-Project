@@ -293,3 +293,22 @@ body.dark-mode .task-card {
     max-height: 250px !important;
 }
 
+/* 1. Prevent any element on the page from causing horizontal page overflow */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* 2. Lock down the activity feed card and wrapper */
+#activityLogContainer, .activity-feed, .card {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* 3. Force long continuous text/numbers to wrap and never stretch the layout */
+.activity-item, .activity-message, .activity-item span {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+}

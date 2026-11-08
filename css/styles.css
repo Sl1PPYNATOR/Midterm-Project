@@ -1,3 +1,4 @@
+/*Typography And Global Styling */
 .text-primary {
     color: #0066b2 !important; 
 }
@@ -39,6 +40,7 @@ footer .text-reset:hover {
     color: #0066b2 !important;
 }
 
+/*Hero Banner And Header Elements*/
 .hero-automotive-banner {
     background-image: url('../img/bmw-banner.jpg');
     background-size: cover;
@@ -71,6 +73,7 @@ footer .text-reset:hover {
     background-color: #212529;
 }
 
+/*Dark Mode Overrides*/
 body.dark-mode {
     background-color: #121212 !important;
     color: #e0e0e0 !important;
@@ -94,6 +97,7 @@ body.dark-mode footer {
     color: #aaa !important;
 }
 
+/*Buttons And Cards Components*/
 .card {
     background-color: #d8d8d8a2 !important;
 }
@@ -108,6 +112,7 @@ body.dark-mode footer {
     color: #ffffff !important;
 }
 
+/*Tables And Responsive Layouts*/
 .table.align-middle.mb-0 > thead.table-dark,
 .table > thead.table-dark > tr,
 .table > thead.table-dark > tr > th {
@@ -138,6 +143,7 @@ body.dark-mode .table > thead.table-dark > tr > th {
     color: #0a58ca;
 }
 
+/* Mobile responsive card-style table*/
 @media (max-width: 767.98px) {
     .table thead {
         display: none;
@@ -182,7 +188,6 @@ body.dark-mode .table > thead.table-dark > tr > th {
     }
 }
 
-
 body.dark-mode .table tr {
     background-color: rgba(255, 255, 255, 0.03) !important;
     box-shadow: none !important;
@@ -207,6 +212,7 @@ body.dark-mode .table td::before {
     padding-right: 0.4rem;
 }
 
+/*Modals And Description Popups*/
 .custom-desc-modal {
     background-color: #e9ecef;
     color: #343a40;
@@ -251,6 +257,7 @@ body.dark-mode .custom-desc-modal .btn-close {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 
+/*Kanban Board Layout And Cards*/
 .kanban-column {
     background-color: #f8f9fa !important;
     border: 1px solid #dee2e6 !important;
@@ -289,23 +296,22 @@ body.dark-mode .task-card {
     color: #e0e0e0 !important;
     border-color: #444 !important;
 }
+
 .card canvas {
     max-height: 250px !important;
 }
 
-/* 1. Prevent any element on the page from causing horizontal page overflow */
+/*Activity Feed Overflow And Text Wrapping Fixes*/
 html, body {
     max-width: 100%;
     overflow-x: hidden;
 }
 
-/* 2. Lock down the activity feed card and wrapper */
 #activityLogContainer, .activity-feed, .card {
     max-width: 100%;
     overflow-x: hidden;
 }
 
-/* 3. Force long continuous text/numbers to wrap and never stretch the layout */
 .activity-item, .activity-message, .activity-item span {
     max-width: 100%;
     overflow-wrap: anywhere;
